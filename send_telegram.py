@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+import datetime
 import logging
 import requests
 from dotenv import load_dotenv
