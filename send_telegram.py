@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
-import os
-import re
 import logging
 import requests
-import datetime
-from slickrpc import Proxy
-from os.path import expanduser
 from dotenv import load_dotenv
 from logging import Handler, Formatter
 
@@ -21,24 +16,8 @@ from logging import Handler, Formatter
 
 load_dotenv()
 
-HOME = expanduser("~")
-CHAIN = "KMD"
-RPCPORT = 7771
-KMD_CONF = HOME + '/.komodo/komodo.conf'
-NN_ADDR = os.getenv('NN_ADDR')
-DEST_ADDR = os.getenv('DEST_ADDR')
-PUBKEY = os.getenv('NN_PUBKEY')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-
-with open(KMD_CONF, 'r') as f:
-    for line in f:
-        l = line.rstrip()
-        if re.search('rpcuser', l):
-            rpcuser = l.replace('rpcuser=', '')
-        elif re.search('rpcpassword', l):
-            rpcpassword = l.replace('rpcpassword=', '')
-RPC = Proxy("http://%s:%s@127.0.0.1:%d"%(rpcuser, rpcpassword, int(RPCPORT)))
 
 class RequestsHandler(Handler):
     def emit(self, record):
@@ -66,21 +45,6 @@ formatter = LogstashFormatter()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+def send_telegram(msg)
+    logger.warning(msg)
 
-# check if recently mined
-min_confs = 99999
-txinfo = RPC.listtransactions("", 777)
-for tx in txinfo:
-    if tx['category'] == 'immature':
-        min_confs = tx['rawconfirmations']
-if min_confs > 120 and min_confs != 99999:
-    logger.warning(f"You have not mined for {min_confs} blocks!")
-
-# Check and clear balance
-balance = RPC.getbalance()
-if balance > 150:
-    send_amount = balance - 50
-    txid = RPC.sendtoaddress(DEST_ADDR, send_amount)
-    logger.warning(f"{send_amount} {CHAIN} sent to {DEST_ADDR}. TXID: {txid}")
-    txid = RPC.sendtoaddress(NN_ADDR, 40)
-    logger.warning(f"40 {CHAIN} sent to {NN_ADDR}. TXID: {txid}")
