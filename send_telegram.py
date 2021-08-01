@@ -45,6 +45,6 @@ formatter = LogstashFormatter()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def send_telegram(msg)
+def send_telegram(msg):
     logger.warning(msg)
 
